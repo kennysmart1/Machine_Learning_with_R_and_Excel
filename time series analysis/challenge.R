@@ -8,13 +8,13 @@ library(zoo)
 library(forecast)
 
 
-
+#GET DATA
 sandiego_demand <- read.csv("https://raw.githubusercontent.com/kennysmart1/time-series-model/main/San%20Diego%20electricity%20demand.csv")
-
+#creating datetime table
 sandiego_demand$LocalDatetime <- as.POSIXct(sandiego_demand$Datetime, tz = "America/Los_Angeles")
 
 sandiego_demand$UTC <- as_datetime(sandiego_demand$Datetime)
-
+#create xts object
 xts_sandiego <- xts(sandiego_demand$Demand, sandiego_demand$LocalDatetime)
 colnames(xts_sandiego) <- c("Demand")
 plot(tail(xts_sandiego, 24*7))
@@ -33,7 +33,7 @@ df_sandiego_weekly$Date <- as.Date(rownames(df_sandiego_weekly))
 df_sandiego_weekly[df_sandiego_weekly$Demand == max(df_sandiego_weekly$Demand),]
 
 
-
+#creating a linear regression object
 cha <- lm(coredata(xts_san_weekly) ~ index(xts_san_weekly))
 xts_san_weekly_lm <- merge(xts_san_weekly, xts(predict(cha, newdata = xts_san_weekly, response = "type"), index(xts_san_weekly)))
 colnames(xts_san_weekly_lm) <- c("Demand", "Fitted")
@@ -47,6 +47,7 @@ plot(xts_sandiego_lm, col = c("grey", "orange"))
 xts_sandiego_recent <- tail(xts_sandiego, 24*7*4)
 plot(xts_sandiego_recent)
 
+#ARIMA model
 results_sandiego <- auto.arima(xts_sandiego_recent)
 xts_sandiego_fitted <- merge(xts_sandiego_recent, xts(fitted(results_sandiego), index(xts_sandiego_recent)))
 plot(xts_sandiego_fitted)
