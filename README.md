@@ -2,4 +2,4 @@
 
 This repo contains projects involving machine learning and big data analysis.
 
-The projects can be of different types and of different case study
+The projects are of different case study
